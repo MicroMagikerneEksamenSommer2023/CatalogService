@@ -13,12 +13,12 @@ namespace CatalogService.Models
         public string ItemName { get; set; }
         public string Description { get; set; }
         public string Category { get; set; }
-        public string Valuation { get; set; }
+        public double Valuation { get; set; }
         public double StartingBid { get; set; }
         public double BuyoutPrice { get; set; }
         public List<string>? ImagePaths { get; set; }
 
-    public CatalogItemDB(string sellerId, string itemName, string description, string category, string valuation, double startingBid, double buyoutPrice, List<string> imagepaths)
+    public CatalogItemDB(string sellerId, string itemName, string description, string category, double valuation, double startingBid, double buyoutPrice, List<string> imagepaths)
     {
         this.SellerId = sellerId;
         this.ItemName = itemName;
@@ -29,7 +29,7 @@ namespace CatalogService.Models
         this.BuyoutPrice = buyoutPrice;
         this.ImagePaths = imagepaths;
     }
-      public CatalogItemDB(string sellerId, string itemName, string description,string category, string valuation, double startingBid, double buyoutPrice)
+      public CatalogItemDB(string sellerId, string itemName, string description,string category, double valuation, double startingBid, double buyoutPrice)
     {
         this.SellerId = sellerId;
         this.ItemName = itemName;
@@ -39,6 +39,9 @@ namespace CatalogService.Models
         this.StartingBid = startingBid;
         this.BuyoutPrice = buyoutPrice;
     }
-
+    public CatalogItem Convert()
+    {
+        return new CatalogItem(this.Id, this.SellerId, this.ItemName,this.Description,this.Category,this.Valuation,this.StartingBid,this.BuyoutPrice);
+    }
     }
 }

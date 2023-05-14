@@ -1,0 +1,9 @@
+{
+  "sellerId": "seller123",
+  "itemName": "Example Item",
+  "description": "This is an example item",
+  "category": "Example Category",
+  "valuation": 100.0,
+  "startingBid": 50.0,
+  "buyoutPrice": 150.0
+}

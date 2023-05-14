@@ -15,24 +15,44 @@ namespace CatalogService.Services
 
         private readonly IConfiguration _config;
 
-       public CatalogDBService(ILogger<CatalogDBService> logger, IConfiguration config)
+        private readonly PictureService picService;
+
+       public CatalogDBService(ILogger<CatalogDBService> logger, IConfiguration config, PictureService picservice)
         {
             _logger = logger;
             _config = config;
+            picService = picservice;
 
             var mongoClient = new MongoClient(_config["connectionsstring"]);
             var database = mongoClient.GetDatabase(_config["database"]);
             _catalogitems = database.GetCollection<CatalogItemDB>(_config["collection"]);
         }
-        public List<CatalogItemDB> GetAllItems()
+        public async Task<List<ImageResponse>> GetAllItems()
         {
+            List<ImageResponse> result = new List<ImageResponse>();
+            
             var filter = Builders<CatalogItemDB>.Filter.Empty;
-            return _catalogitems.Find(filter).ToList();
+            List<CatalogItemDB> dbData = (await _catalogitems.FindAsync(filter)).ToList();
+            foreach(var item in dbData)
+            {
+                List<byte[]> img = picService.ReadPicture(item.ImagePaths);
+                CatalogItem catalogdata = item.Convert();
+                ImageResponse combined = new ImageResponse(img,catalogdata);
+                result.Add(combined);
+            }
+            return result;
+
+
         }
-        public CatalogItemDB GetById(string id)
+        public async Task<ImageResponse> GetById(string id)
         {
+
             var filter = Builders<CatalogItemDB>.Filter.Eq(c => c.Id, id);
-            return _catalogitems.Find(filter).FirstOrDefault();
+            CatalogItemDB dbData = (await _catalogitems.FindAsync(filter)).FirstOrDefault();
+            List<byte[]> img = picService.ReadPicture(dbData.ImagePaths);
+            CatalogItem catalogdata = dbData.Convert();
+            ImageResponse combined = new ImageResponse(img,catalogdata);
+            return combined;
         }
         public List<CatalogItemDB> GetByCategory(string category)
         {
@@ -51,14 +71,12 @@ namespace CatalogService.Services
             var update = Builders<CatalogItemDB>.Update.Set(c=>c.SellerId,data.SellerId).Set(c=>c.ItemName, data.ItemName).Set(c=>c.Description, data.Description).Set(c=>c.Category, data.Category).Set(c=>c.Valuation, data.Valuation).Set(c=>c.StartingBid, data.StartingBid).Set(c=>c.BuyoutPrice, data.BuyoutPrice).Set(c=>c.ImagePaths, data.ImagePaths);
             return _catalogitems.FindOneAndUpdate(filter,update, new FindOneAndUpdateOptions<CatalogItemDB>{ReturnDocument = ReturnDocument.After});
         }
-        public async Task<CatalogItemDB> CreateCatalogItem(CatalogItemDB data)
+        public async void CreateCatalogItem(List<IFormFile> pictures ,CatalogItem data)
         {
-            //chatgpt virker nok ikke lol
-            //skal også kalde imageservice
-            var item = data;
-            await _catalogitems.InsertOneAsync(data);
-            var InsertedID = data.Id;
-            return GetById(InsertedID.ToString());
+            List<string> paths = await picService.SavePicture(pictures);
+            CatalogItemDB item = data.Convert(paths);
+            await _catalogitems.InsertOneAsync(item);
+            //burde kunne return noget, men det har mongodb driver ikke
         }
     }
 }

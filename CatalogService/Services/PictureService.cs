@@ -59,7 +59,8 @@ namespace CatalogService.Services
 
                 images.Add(fileBytes);
             }
-        }
+        } 
+
         return images;
     }
     }
