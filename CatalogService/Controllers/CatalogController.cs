@@ -35,45 +35,112 @@ public class CustomerController : ControllerBase
      [HttpGet("getall")]
     public async Task<IActionResult> GetAll()
     {
-        List<ImageResponse> response = await dBService.GetAllItems();
-        return Ok(response);
+        List<ImageResponse> response;
+        try
+        {
+            response = await dBService.GetAllItems();
+            return Ok(response);
+        }
+        catch (ItemsNotFoundException ex)
+        {
+            return NotFound(new { error = ex.Message });
+        }
+         catch (Exception ex)
+        {
+            
+            return StatusCode(500, new { error = "An unexpected error occurred." + ex.Message });
+        }
+       
     }
 
     [HttpGet("getbyid/{id}")]
     public async Task<IActionResult> GetById([FromRoute]string id)
     {
-        ImageResponse response = await dBService.GetById(id);
-        return Ok(response);
+        try
+        {
+            var item = await dBService.GetById(id);
+            return Ok(item);
+        }
+        catch (ItemsNotFoundException ex)
+        {
+            return NotFound(new { error = ex.Message });
+        }
+        catch (Exception ex)
+        {
+            // Handle other exceptions or unexpected errors
+            return StatusCode(500, new { error = "An unexpected error occurred."+ ex.Message });
+        }
     }
 
     [HttpGet("getbycategory/{category}")]
     public async Task<IActionResult> GetByCategory([FromRoute]string category)
     {
-        List<ImageResponse> response = await dBService.GetByCategory(category);
-        return Ok(response);
+        try
+        {
+            var items = await dBService.GetByCategory(category);
+            return Ok(items);
+        }
+        catch (ItemsNotFoundException ex)
+        {
+            return NotFound(new { error = ex.Message });
+        }
+        catch (Exception ex)
+        {
+            // Handle other exceptions or unexpected errors
+            return StatusCode(500, new { error = "An unexpected error occurred."+ ex.Message });
+        }
     }
 
     [HttpDelete("deletebyid/{id}")]
     public async Task<IActionResult> DeleteById([FromRoute]string id)
     {
-        ImageResponse response = await dBService.DeleteById(id);
-        return Ok(response);
+        try
+        {
+            var item = await dBService.DeleteById(id);
+            return Ok(item);
+        }
+        catch (ItemsNotFoundException ex)
+        {
+            return NotFound(new { error = ex.Message });
+        }
+        catch (Exception ex)
+        {
+            // Handle other exceptions or unexpected errors
+            return StatusCode(500, new { error = "An unexpected error occurred."+ ex.Message });
+        }
     }
 
    [HttpPut("updateitem")]
     public async Task<IActionResult> UdpdateItem([ModelBinder(BinderType = typeof(JsonModelBinder))] CatalogItem data,List<IFormFile> images)
     {
-        //tester
-        ImageResponse response = await dBService.UpdateCatalogItem(images,data);
-        return Ok(response);
+        try{
+        var item = await dBService.UpdateCatalogItem(images,data);
+        return Ok(item);
+        }
+        catch (ItemsNotFoundException ex)
+        {
+            return NotFound(new { error = ex.Message });
+        }
+        catch (Exception ex)
+        {
+            // Handle other exceptions or unexpected errors
+            return StatusCode(500, new { error = "An unexpected error occurred."+ ex.Message });
+        }
 
     }
     [HttpPost("createitem")]
     public async Task<IActionResult> CreateCustomer([ModelBinder(BinderType = typeof(JsonModelBinder))] CatalogItem data,List<IFormFile> images)
     {
         //burde return noget, men kan ikke fetche id
-        dBService.CreateCatalogItem(images,data);
-        return Ok();
+         try
+    {
+        bool insertedStatus = await dBService.CreateCatalogItem(images, data);
+        return Ok(new { message = "Catalog item created successfully.", insertedStatus });
+    }
+    catch (Exception ex)
+    {
+        return StatusCode(500, new { error = "Failed to create catalog item." });
+    }
       
     }
 }

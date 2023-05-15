@@ -1,4 +1,4 @@
-{
+[{
   "sellerId": "seller123",
   "itemName": "Example Item",
   "description": "This is an example item",
@@ -7,3 +7,15 @@
   "startingBid": 50.0,
   "buyoutPrice": 150.0
 }
+,
+{
+  "id": "6460f50ccf3fc70ff8610693",
+  "sellerId": "seller123",
+  "itemName": "Example Item",
+  "description": "This is an example item",
+  "category": "Example Category",
+  "valuation": 100.0,
+  "startingBid": 50.0,
+  "buyoutPrice": 150.0
+}
+]

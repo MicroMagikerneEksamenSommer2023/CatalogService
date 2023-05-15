@@ -1,0 +1,4 @@
+export imagepath="/c/Users/William/Projects/CatalogService/CatalogService"
+export connectionsstring="mongodb://localhost:27017"
+export database="TEST"
+export collection="catalog"
