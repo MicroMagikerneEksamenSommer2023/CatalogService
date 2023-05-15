@@ -39,6 +39,13 @@ public class CustomerController : ControllerBase
         return Ok(response);
     }
 
+    [HttpGet("getbyid/{id}")]
+    public async Task<IActionResult> GetById([FromRoute]string id)
+    {
+        ImageResponse response = await dBService.GetById(id);
+        return Ok(response);
+    }
+
     [HttpDelete("deletebyid/{id}")]
     public async Task<IActionResult> DeleteById([FromRoute]string id)
     {

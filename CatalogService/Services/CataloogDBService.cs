@@ -46,7 +46,6 @@ namespace CatalogService.Services
         }
         public async Task<ImageResponse> GetById(string id)
         {
-
             var filter = Builders<CatalogItemDB>.Filter.Eq(c => c.Id, id);
             CatalogItemDB dbData = (await _catalogitems.FindAsync(filter)).FirstOrDefault();
             List<byte[]> img = picService.ReadPicture(dbData.ImagePaths);
@@ -54,10 +53,19 @@ namespace CatalogService.Services
             ImageResponse combined = new ImageResponse(img,catalogdata);
             return combined;
         }
-        public List<CatalogItemDB> GetByCategory(string category)
+        public async Task<List<ImageResponse>> GetByCategory(string category)
         {
+            List<ImageResponse> result = new List<ImageResponse>();
             var filter = Builders<CatalogItemDB>.Filter.Eq(c => c.Category, category);
-            return _catalogitems.Find(filter).ToList();
+            List<CatalogItemDB> dbData = (await _catalogitems.FindAsync(filter)).ToList();
+            foreach(var item in dbData)
+            {
+                List<byte[]> img = picService.ReadPicture(item.ImagePaths);
+                CatalogItem catalogdata = item.Convert();
+                ImageResponse combined = new ImageResponse(img,catalogdata);
+                result.Add(combined);
+            }
+            return result;
         }
           public async Task<ImageResponse> DeleteById(string id)
         {
