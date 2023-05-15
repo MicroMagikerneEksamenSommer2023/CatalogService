@@ -35,10 +35,10 @@ public class CustomerController : ControllerBase
      [HttpGet("getall")]
     public async Task<IActionResult> GetAll()
     {
-        List<ImageResponse> response;
+        
         try
         {
-            response = await dBService.GetAllItems();
+            var response = await dBService.GetAllItems();
             return Ok(response);
         }
         catch (ItemsNotFoundException ex)
