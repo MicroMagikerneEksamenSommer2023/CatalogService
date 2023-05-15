@@ -68,12 +68,16 @@ namespace CatalogService.Services
             ImageResponse combined = new ImageResponse(img,catalogdata);
             return combined;
         }
-        public CatalogItemDB UpdateCatalogItem(CatalogItemDB data)
+        public async Task<ImageResponse> UpdateCatalogItem(List<IFormFile> pictures ,CatalogItem data)
         {
-            //kald image service og indset metadata i objektet
+            //Burde kunne skrives bedre, men det kræver lige lidt hjerne...
             var filter = Builders<CatalogItemDB>.Filter.Eq(c => c.Id, data.Id);
-            var update = Builders<CatalogItemDB>.Update.Set(c=>c.SellerId,data.SellerId).Set(c=>c.ItemName, data.ItemName).Set(c=>c.Description, data.Description).Set(c=>c.Category, data.Category).Set(c=>c.Valuation, data.Valuation).Set(c=>c.StartingBid, data.StartingBid).Set(c=>c.BuyoutPrice, data.BuyoutPrice).Set(c=>c.ImagePaths, data.ImagePaths);
-            return _catalogitems.FindOneAndUpdate(filter,update, new FindOneAndUpdateOptions<CatalogItemDB>{ReturnDocument = ReturnDocument.After});
+            CatalogItemDB itemToUpdate = _catalogitems.Find(filter).FirstOrDefault();
+            var deletedPics = picService.ReadAndDeletePictures(itemToUpdate.ImagePaths);
+            List<string> newPaths = await picService.SavePicture(pictures);
+            var update = Builders<CatalogItemDB>.Update.Set(c=>c.SellerId,data.SellerId).Set(c=>c.ItemName, data.ItemName).Set(c=>c.Description, data.Description).Set(c=>c.Category, data.Category).Set(c=>c.Valuation, data.Valuation).Set(c=>c.StartingBid, data.StartingBid).Set(c=>c.BuyoutPrice, data.BuyoutPrice).Set(c=>c.ImagePaths, newPaths);
+            CatalogItemDB dbData = await _catalogitems.FindOneAndUpdateAsync(filter,update, new FindOneAndUpdateOptions<CatalogItemDB>{ReturnDocument = ReturnDocument.Before});
+            return new ImageResponse(picService.ReadPicture(newPaths),dbData.Convert());
         }
         public async void CreateCatalogItem(List<IFormFile> pictures ,CatalogItem data)
         {

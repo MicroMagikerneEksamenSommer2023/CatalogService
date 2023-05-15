@@ -46,6 +46,13 @@ public class CustomerController : ControllerBase
         return Ok(response);
     }
 
+   [HttpPut("updatecustomer")]
+    public async Task<IActionResult> UdpdateCustomer([ModelBinder(BinderType = typeof(JsonModelBinder))] CatalogItem data,List<IFormFile> images)
+    {
+        ImageResponse response = await dBService.UpdateCatalogItem(images,data);
+        return Ok(response);
+
+    }
     [HttpPost("createitem")]
     public async Task<IActionResult> CreateCustomer([ModelBinder(BinderType = typeof(JsonModelBinder))] CatalogItem data,List<IFormFile> images)
     {
