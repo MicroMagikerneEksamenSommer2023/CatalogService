@@ -60,8 +60,8 @@ public class CustomerController : ControllerBase
         return Ok(response);
     }
 
-   [HttpPut("updatecustomer")]
-    public async Task<IActionResult> UdpdateCustomer([ModelBinder(BinderType = typeof(JsonModelBinder))] CatalogItem data,List<IFormFile> images)
+   [HttpPut("updateitem")]
+    public async Task<IActionResult> UdpdateItem([ModelBinder(BinderType = typeof(JsonModelBinder))] CatalogItem data,List<IFormFile> images)
     {
         //tester
         ImageResponse response = await dBService.UpdateCatalogItem(images,data);
