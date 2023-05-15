@@ -57,7 +57,7 @@ public class CustomerController : ControllerBase
     [HttpPost("createitem")]
     public async Task<IActionResult> CreateCustomer([ModelBinder(BinderType = typeof(JsonModelBinder))] CatalogItem data,List<IFormFile> images)
     {
-        _logger.LogInformation("Call revieved, " + data.ToString());
+        //burde return noget, men kan ikke fetche id
         dBService.CreateCatalogItem(images,data);
         return Ok();
       
