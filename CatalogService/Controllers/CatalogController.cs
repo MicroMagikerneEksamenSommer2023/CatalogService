@@ -46,7 +46,7 @@ public class CustomerController : ControllerBase
         return Ok(response);
     }
 
-    [HttpGet("getbyid/{category}")]
+    [HttpGet("getbycategory/{category}")]
     public async Task<IActionResult> GetByCategory([FromRoute]string category)
     {
         List<ImageResponse> response = await dBService.GetByCategory(category);
