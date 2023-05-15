@@ -59,10 +59,14 @@ namespace CatalogService.Services
             var filter = Builders<CatalogItemDB>.Filter.Eq(c => c.Category, category);
             return _catalogitems.Find(filter).ToList();
         }
-          public CatalogItemDB DeleteById(string id)
+          public async Task<ImageResponse> DeleteById(string id)
         {
             var filter = Builders<CatalogItemDB>.Filter.Eq(c => c.Id, id);
-            return _catalogitems.FindOneAndDelete(filter);
+            CatalogItemDB dbData = await _catalogitems.FindOneAndDeleteAsync(filter);
+            List<byte[]> img = picService.ReadAndDeletePictures(dbData.ImagePaths);
+            CatalogItem catalogdata = dbData.Convert();
+            ImageResponse combined = new ImageResponse(img,catalogdata);
+            return combined;
         }
         public CatalogItemDB UpdateCatalogItem(CatalogItemDB data)
         {

@@ -33,9 +33,16 @@ public class CustomerController : ControllerBase
     }
 
      [HttpGet("getall")]
-    public  async Task<IActionResult> GetAll()
+    public async Task<IActionResult> GetAll()
     {
         List<ImageResponse> response = await dBService.GetAllItems();
+        return Ok(response);
+    }
+
+    [HttpDelete("deletebyid/{id}")]
+    public async Task<IActionResult> DeleteById([FromRoute]string id)
+    {
+        ImageResponse response = await dBService.DeleteById(id);
         return Ok(response);
     }
 

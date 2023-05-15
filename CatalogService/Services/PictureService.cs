@@ -63,5 +63,39 @@ namespace CatalogService.Services
 
         return images;
     }
+    public List<byte[]> ReadAndDeletePictures(List<string> filenames)
+{
+    var images = new List<byte[]>();
+
+    foreach (var filename in filenames)
+    {
+        string filePath = Path.Combine(imagepath,filename);
+
+        if (System.IO.File.Exists(filePath))
+        {
+            byte[] fileBytes = System.IO.File.ReadAllBytes(filePath);
+            
+            try
+            {
+                // Delete the file after reading its bytes
+                System.IO.File.Delete(filePath);
+            }
+            catch (IOException ioExp)
+            {
+                Console.WriteLine($"Error occurred while deleting: {filePath}. Details: {ioExp.Message}");
+                throw; // Re-throw the exception to stop execution
+            }
+            catch (Exception exp)
+            {
+                Console.WriteLine($"An error occurred: {exp.Message}");
+                throw; // Re-throw the exception to stop execution
+            }
+            
+            images.Add(fileBytes);
+        }
+    } 
+
+    return images;
+}
     }
 }
