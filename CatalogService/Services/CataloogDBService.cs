@@ -105,7 +105,7 @@ namespace CatalogService.Services
             var deletedPics = picService.ReadAndDeletePictures(itemToUpdate.ImagePaths);
             List<string> newPaths = await picService.SavePicture(pictures);
             var update = Builders<CatalogItemDB>.Update.Set(c=>c.SellerId,data.SellerId).Set(c=>c.ItemName, data.ItemName).Set(c=>c.Description, data.Description).Set(c=>c.Category, data.Category).Set(c=>c.Valuation, data.Valuation).Set(c=>c.StartingBid, data.StartingBid).Set(c=>c.BuyoutPrice, data.BuyoutPrice).Set(c=>c.ImagePaths, newPaths);
-            CatalogItemDB dbData = await _catalogitems.FindOneAndUpdateAsync(filter,update, new FindOneAndUpdateOptions<CatalogItemDB>{ReturnDocument = ReturnDocument.Before});
+            CatalogItemDB dbData = await _catalogitems.FindOneAndUpdateAsync(filter,update, new FindOneAndUpdateOptions<CatalogItemDB>{ReturnDocument = ReturnDocument.After});
             return new ImageResponse(picService.ReadPicture(newPaths),dbData.Convert());
         }
         public async Task<bool> CreateCatalogItem(List<IFormFile> pictures ,CatalogItem data)
