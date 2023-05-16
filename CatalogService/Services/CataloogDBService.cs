@@ -115,6 +115,7 @@ namespace CatalogService.Services
             try
             {
                 await _catalogitems.InsertOneAsync(item);
+                
                 return true;
             }
             catch(Exception ex)

@@ -129,7 +129,7 @@ public class CustomerController : ControllerBase
 
     }
     [HttpPost("createitem")]
-    public async Task<IActionResult> CreateCustomer([ModelBinder(BinderType = typeof(JsonModelBinder))] CatalogItem data,List<IFormFile> images)
+    public async Task<IActionResult> CreateItem([ModelBinder(BinderType = typeof(JsonModelBinder))] CatalogItem data,List<IFormFile> images)
     {
         //burde return noget, men kan ikke fetche id
          try
