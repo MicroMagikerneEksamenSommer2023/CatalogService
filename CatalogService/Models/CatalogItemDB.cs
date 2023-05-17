@@ -17,8 +17,10 @@ namespace CatalogService.Models
         public double StartingBid { get; set; }
         public double BuyoutPrice { get; set; }
         public List<string>? ImagePaths { get; set; }
+        public DateTime StartTime {get;set;}
+        public DateTime EndTime {get;set;}
 
-    public CatalogItemDB(string sellerId, string itemName, string description, string category, double valuation, double startingBid, double buyoutPrice, List<string> imagepaths)
+    public CatalogItemDB(string sellerId, string itemName, string description, string category, double valuation, double startingBid, double buyoutPrice, List<string> imagepaths, DateTime starttime, DateTime endtime)
     {
         this.SellerId = sellerId;
         this.ItemName = itemName;
@@ -28,8 +30,10 @@ namespace CatalogService.Models
         this.StartingBid = startingBid;
         this.BuyoutPrice = buyoutPrice;
         this.ImagePaths = imagepaths;
+        this.StartTime = starttime;
+        this.EndTime = endtime;
     }
-      public CatalogItemDB(string sellerId, string itemName, string description,string category, double valuation, double startingBid, double buyoutPrice)
+      public CatalogItemDB(string sellerId, string itemName, string description,string category, double valuation, double startingBid, double buyoutPrice,DateTime starttime, DateTime endtime)
     {
         this.SellerId = sellerId;
         this.ItemName = itemName;
@@ -38,10 +42,12 @@ namespace CatalogService.Models
         this.Valuation = valuation;
         this.StartingBid = startingBid;
         this.BuyoutPrice = buyoutPrice;
+        this.StartTime = starttime;
+        this.EndTime = endtime;
     }
     public CatalogItem Convert()
     {
-        return new CatalogItem(this.Id, this.SellerId, this.ItemName,this.Description,this.Category,this.Valuation,this.StartingBid,this.BuyoutPrice);
+        return new CatalogItem(this.Id, this.SellerId, this.ItemName,this.Description,this.Category,this.Valuation,this.StartingBid,this.BuyoutPrice,this.StartTime,this.EndTime);
     }
     }
 }

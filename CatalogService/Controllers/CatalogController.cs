@@ -143,5 +143,39 @@ public class CustomerController : ControllerBase
     }
       
     }
+    [HttpPut("updatetime")]
+    public async Task<IActionResult> UdpdateTime([FromBody]string Id, DateTime EndTime)
+    {
+        try{
+        var item = await dBService.SetTime(Id,EndTime);
+        return Ok(item);
+        }
+        catch (ItemsNotFoundException ex)
+        {
+            return NotFound(new { error = ex.Message });
+        }
+        catch (Exception ex)
+        {
+            // Handle other exceptions or unexpected errors
+            return StatusCode(500, new { error = "An unexpected error occurred."+ ex.Message });
+        }
+    }
+    [HttpGet("getitemandprice/{id}")]
+    public async Task<IActionResult> GetTimeAndPrice([FromRoute]string id)
+    {
+        try
+        {
+            var items = await dBService.GetTimeAndPrice(id);
+            return Ok(items);
+        }
+        catch (ItemsNotFoundException ex)
+        {
+            return NotFound(new { error = ex.Message });
+        }
+        catch (Exception ex)
+        {
+            // Handle other exceptions or unexpected errors
+            return StatusCode(500, new { error = "An unexpected error occurred."+ ex.Message });
+        }
+    }
 }
-;

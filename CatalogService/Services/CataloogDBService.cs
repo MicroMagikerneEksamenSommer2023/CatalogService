@@ -124,5 +124,30 @@ namespace CatalogService.Services
             }
             //burde kunne return noget, men det har mongodb driver ikke
         }
+        public async Task<Wrapper> GetTimeAndPrice(string id)
+        {
+
+            var filter = Builders<CatalogItemDB>.Filter.Eq(c => c.Id, id);
+            var dbData = (await _catalogitems.FindAsync(filter)).FirstOrDefault();
+              if (dbData == null)
+            {
+                throw new ItemsNotFoundException($"No item with ID {id} was found in the database.");
+            }
+            Wrapper newWrapper = new Wrapper(dbData.StartTime,dbData.EndTime,dbData.StartingBid,dbData.BuyoutPrice);
+            return newWrapper;
+        }
+        public async Task<bool> SetTime(string id, DateTime newtime)
+        {
+             var filter = Builders<CatalogItemDB>.Filter.Eq(c => c.Id, id);
+            var itemToUpdate = _catalogitems.Find(filter).FirstOrDefault();
+             if (itemToUpdate == null)
+            {
+                throw new ItemsNotFoundException($"No item with ID {id} was found in the database for the update.");
+            }
+            var update = Builders<CatalogItemDB>.Update.Set(c=>c.EndTime,newtime);
+            CatalogItemDB dbData = await _catalogitems.FindOneAndUpdateAsync(filter,update);
+            return true;
+            
+        }
     }
 }

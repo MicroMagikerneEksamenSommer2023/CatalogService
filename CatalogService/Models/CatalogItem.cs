@@ -30,9 +30,13 @@ namespace CatalogService.Models
 
         [Newtonsoft.Json.JsonProperty("buyoutPrice")]
         public double BuyoutPrice { get; set; }
+        [Newtonsoft.Json.JsonProperty("startTime")]
+        public DateTime StartTime {get;set;}
+        [Newtonsoft.Json.JsonProperty("endTime")]
+        public DateTime EndTime {get;set;}
 
     [JsonConstructor]
-    public CatalogItem(string sellerId, string itemName, string description, string category, double valuation, double startingBid, double buyoutPrice)
+    public CatalogItem(string sellerId, string itemName, string description, string category, double valuation, double startingBid, double buyoutPrice,DateTime starttime, DateTime endtime)
     {
         this.SellerId = sellerId;
         this.ItemName = itemName;
@@ -42,7 +46,7 @@ namespace CatalogService.Models
         this.StartingBid = startingBid;
         this.BuyoutPrice = buyoutPrice;
     }
-       public CatalogItem(string id,string sellerId, string itemName, string description, string category, double valuation, double startingBid, double buyoutPrice)
+       public CatalogItem(string id,string sellerId, string itemName, string description, string category, double valuation, double startingBid, double buyoutPrice,DateTime starttime, DateTime endtime)
     {
         this.Id = id;
         this.SellerId = sellerId;
@@ -57,7 +61,7 @@ namespace CatalogService.Models
 
     public CatalogItemDB Convert(List<string> paths)
     {
-        return new CatalogItemDB(this.SellerId, this.ItemName,this.Description,this.Category,this.Valuation,this.StartingBid,this.BuyoutPrice,paths);
+        return new CatalogItemDB(this.SellerId, this.ItemName,this.Description,this.Category,this.Valuation,this.StartingBid,this.BuyoutPrice,paths,this.StartTime,this.EndTime);
     }
 
     }
