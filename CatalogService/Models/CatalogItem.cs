@@ -31,12 +31,14 @@ namespace CatalogService.Models
         [Newtonsoft.Json.JsonProperty("buyoutPrice")]
         public double BuyoutPrice { get; set; }
         [Newtonsoft.Json.JsonProperty("startTime")]
+        [BsonDateTimeOptions(Kind = DateTimeKind.Utc)]
         public DateTime StartTime {get;set;}
         [Newtonsoft.Json.JsonProperty("endTime")]
+        [BsonDateTimeOptions(Kind = DateTimeKind.Utc)]
         public DateTime EndTime {get;set;}
 
     [JsonConstructor]
-    public CatalogItem(string sellerId, string itemName, string description, string category, double valuation, double startingBid, double buyoutPrice,DateTime starttime, DateTime endtime)
+    public CatalogItem(string sellerId, string itemName, string description, string category, double valuation, double startingBid, double buyoutPrice,DateTime startTime, DateTime endTime)
     {
         this.SellerId = sellerId;
         this.ItemName = itemName;
@@ -45,10 +47,10 @@ namespace CatalogService.Models
         this.Valuation = valuation;
         this.StartingBid = startingBid;
         this.BuyoutPrice = buyoutPrice;
-        this.StartTime = starttime;
-        this.EndTime = endtime;
+        this.StartTime = startTime;
+        this.EndTime = endTime;
     }
-       public CatalogItem(string id,string sellerId, string itemName, string description, string category, double valuation, double startingBid, double buyoutPrice,DateTime starttime, DateTime endtime)
+       public CatalogItem(string id,string sellerId, string itemName, string description, string category, double valuation, double startingBid, double buyoutPrice,DateTime startTime, DateTime endTime)
     {
         this.Id = id;
         this.SellerId = sellerId;
@@ -58,8 +60,8 @@ namespace CatalogService.Models
         this.Valuation = valuation;
         this.StartingBid = startingBid;
         this.BuyoutPrice = buyoutPrice;
-        this.StartTime = starttime;
-        this.EndTime = endtime;
+        this.StartTime = startTime;
+        this.EndTime = endTime;
     }
 
 

@@ -20,7 +20,7 @@ namespace CatalogService.Models
         public DateTime StartTime {get;set;}
         public DateTime EndTime {get;set;}
 
-    public CatalogItemDB(string sellerId, string itemName, string description, string category, double valuation, double startingBid, double buyoutPrice, List<string> imagepaths, DateTime starttime, DateTime endtime)
+    public CatalogItemDB(string sellerId, string itemName, string description, string category, double valuation, double startingBid, double buyoutPrice, List<string> imagepaths, DateTime startTime, DateTime endTime)
     {
         this.SellerId = sellerId;
         this.ItemName = itemName;
@@ -30,10 +30,10 @@ namespace CatalogService.Models
         this.StartingBid = startingBid;
         this.BuyoutPrice = buyoutPrice;
         this.ImagePaths = imagepaths;
-        this.StartTime = starttime;
-        this.EndTime = endtime;
+        this.StartTime = startTime;
+        this.EndTime = endTime;
     }
-      public CatalogItemDB(string sellerId, string itemName, string description,string category, double valuation, double startingBid, double buyoutPrice,DateTime starttime, DateTime endtime)
+      public CatalogItemDB(string sellerId, string itemName, string description,string category, double valuation, double startingBid, double buyoutPrice,DateTime startTime, DateTime endTime)
     {
         this.SellerId = sellerId;
         this.ItemName = itemName;
@@ -42,8 +42,8 @@ namespace CatalogService.Models
         this.Valuation = valuation;
         this.StartingBid = startingBid;
         this.BuyoutPrice = buyoutPrice;
-        this.StartTime = starttime;
-        this.EndTime = endtime;
+        this.StartTime = startTime;
+        this.EndTime = endTime;
     }
     public CatalogItem Convert()
     {

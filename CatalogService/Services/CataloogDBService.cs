@@ -40,6 +40,7 @@ namespace CatalogService.Services
             }
             foreach(var item in dbData)
             {
+                _logger.LogInformation("found item date:" + item.StartTime);
                 List<byte[]> img = picService.ReadPicture(item.ImagePaths);
                 CatalogItem catalogdata = item.Convert();
                 ImageResponse combined = new ImageResponse(img,catalogdata);
@@ -110,6 +111,7 @@ namespace CatalogService.Services
         }
         public async Task<bool> CreateCatalogItem(List<IFormFile> pictures ,CatalogItem data)
         {
+            _logger.LogInformation("create starttime: " + data.StartTime);
             List<string> paths = await picService.SavePicture(pictures);
             CatalogItemDB item = data.Convert(paths);
             try
