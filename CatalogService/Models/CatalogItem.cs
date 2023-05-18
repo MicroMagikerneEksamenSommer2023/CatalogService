@@ -45,6 +45,8 @@ namespace CatalogService.Models
         this.Valuation = valuation;
         this.StartingBid = startingBid;
         this.BuyoutPrice = buyoutPrice;
+        this.StartTime = starttime;
+        this.EndTime = endtime;
     }
        public CatalogItem(string id,string sellerId, string itemName, string description, string category, double valuation, double startingBid, double buyoutPrice,DateTime starttime, DateTime endtime)
     {
@@ -56,6 +58,8 @@ namespace CatalogService.Models
         this.Valuation = valuation;
         this.StartingBid = startingBid;
         this.BuyoutPrice = buyoutPrice;
+        this.StartTime = starttime;
+        this.EndTime = endtime;
     }
 
 

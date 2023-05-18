@@ -5,7 +5,9 @@
   "category": "Example Category",
   "valuation": 100.0,
   "startingBid": 50.0,
-  "buyoutPrice": 150.0
+  "buyoutPrice": 150.0,
+  "startTime": "2023-05-18T15:30:00Z",
+  "endTime": "2023-05-19T15:30:00Z"
 }
 ,
 {
