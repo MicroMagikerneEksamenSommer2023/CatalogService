@@ -144,10 +144,9 @@ public class CustomerController : ControllerBase
       
     }
     [HttpPut("updatetime")]
-    public async Task<IActionResult> UdpdateTime([FromBody]string Id, DateTime EndTime)
-    {
+    public async Task<IActionResult> UdpdateTime([FromBody]TimeDTO data) {
         try{
-        var item = await dBService.SetTime(Id,EndTime);
+        var item = await dBService.SetTime(data);
         return Ok(item);
         }
         catch (ItemsNotFoundException ex)

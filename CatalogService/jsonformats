@@ -6,10 +6,9 @@
   "valuation": 100.0,
   "startingBid": 50.0,
   "buyoutPrice": 150.0,
-  "startTime": "2023-05-18T15:30:00Z",
-  "endTime": "2023-05-19T15:30:00Z"
-}
-,
+  "startTime": "2021-01-01T00:00:00Z",
+  "endTime": "2024-05-19T15:30:00Z"
+},
 {
   "id": "6460f50ccf3fc70ff8610693",
   "sellerId": "seller123",
@@ -18,6 +17,8 @@
   "category": "Example Category",
   "valuation": 100.0,
   "startingBid": 50.0,
-  "buyoutPrice": 150.0
+  "buyoutPrice": 150.0,
+  "startTime": "2021-01-01T00:00:00Z",
+  "endTime": "2024-05-19T15:30:00Z"
 }
 ]

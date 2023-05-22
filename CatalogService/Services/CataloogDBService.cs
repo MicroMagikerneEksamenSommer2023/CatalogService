@@ -138,15 +138,15 @@ namespace CatalogService.Services
             Wrapper newWrapper = new Wrapper(dbData.StartTime,dbData.EndTime,dbData.StartingBid,dbData.BuyoutPrice);
             return newWrapper;
         }
-        public async Task<bool> SetTime(string id, DateTime newtime)
+        public async Task<bool> SetTime(TimeDTO data)
         {
-             var filter = Builders<CatalogItemDB>.Filter.Eq(c => c.Id, id);
+             var filter = Builders<CatalogItemDB>.Filter.Eq(c => c.Id, data.CatalogId);
             var itemToUpdate = _catalogitems.Find(filter).FirstOrDefault();
              if (itemToUpdate == null)
             {
-                throw new ItemsNotFoundException($"No item with ID {id} was found in the database for the update.");
+                throw new ItemsNotFoundException($"No item with ID {data.CatalogId} was found in the database for the update.");
             }
-            var update = Builders<CatalogItemDB>.Update.Set(c=>c.EndTime,newtime);
+            var update = Builders<CatalogItemDB>.Update.Set(c=>c.EndTime,data.EndTime);
             CatalogItemDB dbData = await _catalogitems.FindOneAndUpdateAsync(filter,update);
             return true;
             
