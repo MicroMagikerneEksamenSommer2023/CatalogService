@@ -107,7 +107,7 @@ namespace CatalogService.Services
             }
             var deletedPics = picService.ReadAndDeletePictures(itemToUpdate.ImagePaths);
             List<string> newPaths = await picService.SavePicture(pictures);
-            var update = Builders<CatalogItemDB>.Update.Set(c=>c.SellerId,data.SellerId).Set(c=>c.ItemName, data.ItemName).Set(c=>c.Description, data.Description).Set(c=>c.Category, data.Category).Set(c=>c.Valuation, data.Valuation).Set(c=>c.StartingBid, data.StartingBid).Set(c=>c.BuyoutPrice, data.BuyoutPrice).Set(c=>c.ImagePaths, newPaths);
+            var update = Builders<CatalogItemDB>.Update.Set(c=>c.SellerId,data.SellerId).Set(c=>c.ItemName, data.ItemName).Set(c=>c.Description, data.Description).Set(c=>c.Category, data.Category).Set(c=>c.Valuation, data.Valuation).Set(c=>c.StartingBid, data.StartingBid).Set(c=>c.BuyoutPrice, data.BuyoutPrice).Set(c=>c.ImagePaths, newPaths).Set(c => c.StartTime, data.StartTime).Set(c=> c.EndTime, data.EndTime);
             CatalogItemDB dbData = await _catalogitems.FindOneAndUpdateAsync(filter,update, new FindOneAndUpdateOptions<CatalogItemDB>{ReturnDocument = ReturnDocument.After});
             return new ImageResponse(picService.ReadPicture(newPaths), await dbData.Convert(RedisConnection));
         }
