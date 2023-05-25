@@ -8,9 +8,9 @@ namespace CatalogService.Models
 public class ImageResponse
 {
     public List<byte[]> FileBytes { get; set; }
-    public CatalogItem AdditionalData { get; set; }
+    public ItemWithBid AdditionalData { get; set; }
 
-    public ImageResponse(List<byte[]> img, CatalogItem data)
+    public ImageResponse(List<byte[]> img, ItemWithBid data)
     {
         this.FileBytes = img;
         this.AdditionalData = data;

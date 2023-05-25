@@ -1,6 +1,7 @@
 using MongoDB.Bson.Serialization.Attributes;
 using MongoDB.Bson;
 using Newtonsoft.Json;
+using StackExchange.Redis;
 
 namespace CatalogService.Models
 {
@@ -45,9 +46,28 @@ namespace CatalogService.Models
         this.StartTime = startTime;
         this.EndTime = endTime;
     }
-    public CatalogItem Convert()
+    public async Task<ItemWithBid> Convert(string cache)
     {
-        return new CatalogItem(this.Id, this.SellerId, this.ItemName,this.Description,this.Category,this.Valuation,this.StartingBid,this.BuyoutPrice,this.StartTime,this.EndTime);
+        double currentBid = await FetchBid(this.Id, cache);
+        return new ItemWithBid(this.Id, this.SellerId, this.ItemName,this.Description,this.Category,this.Valuation,this.StartingBid,this.BuyoutPrice,this.StartTime,this.EndTime, currentBid);
     }
+    public async Task<double> FetchBid(string id, string connectionstring)
+    {
+        
+        
+        ConnectionMultiplexer redis = ConnectionMultiplexer.Connect(connectionstring);
+        IDatabase cache = redis.GetDatabase();
+        
+            var price = await cache.StringGetAsync("price" + id);
+            if (price.IsNull)
+            {
+                return 0.0;
+            }
+            else
+            {return double.Parse(price);}
+            
+        }
+
+    
     }
 }

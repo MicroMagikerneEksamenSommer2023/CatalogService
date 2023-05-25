@@ -16,6 +16,7 @@ namespace CatalogService.Services
         private readonly IConfiguration _config;
 
         private readonly PictureService picService;
+        private readonly string RedisConnection;
 
        public CatalogDBService(ILogger<CatalogDBService> logger, IConfiguration config, PictureService picservice)
         {
@@ -26,6 +27,7 @@ namespace CatalogService.Services
             var mongoClient = new MongoClient(_config["connectionsstring"]);
             var database = mongoClient.GetDatabase(_config["database"]);
             _catalogitems = database.GetCollection<CatalogItemDB>(_config["collection"]);
+            RedisConnection = _config["redisconnection"];
         }
         public async Task<List<ImageResponse>> GetAllItems()
         {
@@ -42,7 +44,7 @@ namespace CatalogService.Services
             {
                 _logger.LogInformation("found item date:" + item.StartTime);
                 List<byte[]> img = picService.ReadPicture(item.ImagePaths);
-                CatalogItem catalogdata = item.Convert();
+                var catalogdata = await item.Convert(RedisConnection);
                 ImageResponse combined = new ImageResponse(img,catalogdata);
                 result.Add(combined);
             }
@@ -59,7 +61,7 @@ namespace CatalogService.Services
                 throw new ItemsNotFoundException($"No item with ID {id} was found in the database.");
             }
             var img = picService.ReadPicture(dbData.ImagePaths);
-            var catalogdata = dbData.Convert();
+            var catalogdata = await dbData.Convert(RedisConnection);
             var combined = new ImageResponse(img,catalogdata);
             return combined;
         }
@@ -75,7 +77,7 @@ namespace CatalogService.Services
             foreach(var item in dbData)
             {
                 List<byte[]> img = picService.ReadPicture(item.ImagePaths);
-                CatalogItem catalogdata = item.Convert();
+                var catalogdata = await item.Convert(RedisConnection);
                 ImageResponse combined = new ImageResponse(img,catalogdata);
                 result.Add(combined);
             }
@@ -90,7 +92,7 @@ namespace CatalogService.Services
                 throw new ItemsNotFoundException($"No item with ID {id} was found in the database for deletion.");
             }
             List<byte[]> img = picService.ReadAndDeletePictures(dbData.ImagePaths);
-            CatalogItem catalogdata = dbData.Convert();
+            var catalogdata = await dbData.Convert(RedisConnection);
             ImageResponse combined = new ImageResponse(img,catalogdata);
             return combined;
         }
@@ -107,7 +109,7 @@ namespace CatalogService.Services
             List<string> newPaths = await picService.SavePicture(pictures);
             var update = Builders<CatalogItemDB>.Update.Set(c=>c.SellerId,data.SellerId).Set(c=>c.ItemName, data.ItemName).Set(c=>c.Description, data.Description).Set(c=>c.Category, data.Category).Set(c=>c.Valuation, data.Valuation).Set(c=>c.StartingBid, data.StartingBid).Set(c=>c.BuyoutPrice, data.BuyoutPrice).Set(c=>c.ImagePaths, newPaths);
             CatalogItemDB dbData = await _catalogitems.FindOneAndUpdateAsync(filter,update, new FindOneAndUpdateOptions<CatalogItemDB>{ReturnDocument = ReturnDocument.After});
-            return new ImageResponse(picService.ReadPicture(newPaths),dbData.Convert());
+            return new ImageResponse(picService.ReadPicture(newPaths), await dbData.Convert(RedisConnection));
         }
         public async Task<bool> CreateCatalogItem(List<IFormFile> pictures ,CatalogItem data)
         {
