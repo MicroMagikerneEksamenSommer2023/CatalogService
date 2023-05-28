@@ -4,6 +4,9 @@ using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using MongoDB.Bson;
 using MongoDB.Driver;
+using System.Net.Http;
+using System.Threading.Tasks;
+using Newtonsoft.Json;
 
 namespace CatalogService.Services
 {
@@ -18,6 +21,9 @@ namespace CatalogService.Services
         private readonly PictureService picService;
         private readonly string RedisConnection;
 
+        private readonly string GitPusherBase;
+        private readonly string GitPusherEndpoint;
+
        public CatalogDBService(ILogger<CatalogDBService> logger, IConfiguration config, PictureService picservice)
         {
             _logger = logger;
@@ -28,6 +34,8 @@ namespace CatalogService.Services
             var database = mongoClient.GetDatabase(_config["database"]);
             _catalogitems = database.GetCollection<CatalogItemDB>(_config["collection"]);
             RedisConnection = _config["redisconnection"];
+            GitPusherBase = _config["gitpusherbase"] ?? string.Empty;
+            GitPusherEndpoint = _config["gitpusherendpoint"];
         }
         public async Task<List<ImageResponse>> GetAllItems()
         {
@@ -83,6 +91,25 @@ namespace CatalogService.Services
             }
             return result;
         }
+
+        public async Task<List<Category>> GetFromPushers(string category)
+        {
+            List<Category> result = new List<Category>();
+            using(HttpClient client = new HttpClient())
+            {
+                client.BaseAddress = new Uri(GitPusherBase);
+                HttpResponseMessage response = await client.GetAsync(GitPusherEndpoint + "/" +category); 
+                if (response.IsSuccessStatusCode)
+                {
+                    string responseData = await response.Content.ReadAsStringAsync();
+                    result = JsonConvert.DeserializeObject<List<Category>>(responseData);
+                    return result;
+                }
+                else 
+                {throw new ItemsNotFoundException("Kunne ikke finde noget i databasen hos GitPushers");}
+            }
+        }
+
           public async Task<ImageResponse> DeleteById(string id)
         {
             var filter = Builders<CatalogItemDB>.Filter.Eq(c => c.Id, id);
