@@ -15,17 +15,17 @@ namespace CatalogService.Controllers;
 
 [ApiController]
 [Route("catalogservice/v1")]
-public class CustomerController : ControllerBase
+public class CatalogController : ControllerBase
 {
 
 
-    private readonly ILogger<CustomerController> _logger;
+    private readonly ILogger<CatalogController> _logger;
 
-    private readonly CatalogDBService dBService;
+    private readonly ICatalogDBService dBService;
 
     private readonly PictureService picService;
 
-    public CustomerController(ILogger<CustomerController> logger, CatalogDBService dbservice, PictureService picservice)
+    public CatalogController(ILogger<CatalogController> logger, IConfiguration configuration, ICatalogDBService dbservice, PictureService picservice)
     {
         _logger = logger;
         dBService = dbservice;

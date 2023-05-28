@@ -19,6 +19,10 @@ namespace CatalogService.Services
             _config = config;
             imagepath = _config["imagepath"];
         }
+            public PictureService()
+        {
+           
+        }
 
         public async Task<List<string>> SavePicture(List<IFormFile> files)
     {
