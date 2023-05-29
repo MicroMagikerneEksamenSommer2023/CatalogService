@@ -24,20 +24,17 @@ namespace CatalogService.Services
 
     public class CatalogDBService : ICatalogDBService
     {
+        // Attributter
         private readonly ILogger<CatalogDBService> _logger;
-
         private readonly IMongoCollection<CatalogItemDB> _catalogitems;
-
         private readonly IConfiguration _config;
-
         private readonly PictureService picService;
         private readonly string RedisConnection;
-
-
         private readonly string GitPusherBase;
         private readonly string GitPusherEndpoint;
 
-       public CatalogDBService(ILogger<CatalogDBService> logger, IConfiguration config, PictureService picservice)
+        // Constructor
+        public CatalogDBService(ILogger<CatalogDBService> logger, IConfiguration config, PictureService picservice)
         {
             _logger = logger;
             _config = config;
@@ -50,10 +47,11 @@ namespace CatalogService.Services
             GitPusherBase = _config["gitpusherbase"] ?? string.Empty;
             GitPusherEndpoint = _config["gitpusherendpoint"];
         }
+
+        // Henter alle elementer fra databasen og returnerer en liste af ImageResponse-objekter
         public async Task<List<ImageResponse>> GetAllItems()
         {
             List<ImageResponse> result = new List<ImageResponse>();
-
             var filter = Builders<CatalogItemDB>.Filter.Empty;
             var dbData = (await _catalogitems.FindAsync(filter)).ToList();
 
@@ -70,9 +68,9 @@ namespace CatalogService.Services
                 result.Add(combined);
             }
             return result;
-
-
         }
+
+        // Henter et element fra databasen baseret på id og returnerer en ImageResponse
         public async Task<ImageResponse> GetById(string id)
         {
             var filter = Builders<CatalogItemDB>.Filter.Eq(c => c.Id, id);
@@ -86,6 +84,8 @@ namespace CatalogService.Services
             var combined = new ImageResponse(img, catalogdata);
             return combined;
         }
+
+        // Henter elementer fra databasen baseret på kategori og returnerer en liste af ImageResponse-objekter
         public async Task<List<ImageResponse>> GetByCategory(string category)
         {
             List<ImageResponse> result = new List<ImageResponse>();
@@ -105,29 +105,27 @@ namespace CatalogService.Services
             return result;
         }
 
-      
-
-
+        // Interoperabilitet med Git Pushers
         public async Task<List<Category>> GetFromPushers(string category)
         {
             List<Category> result = new List<Category>();
-            using(HttpClient client = new HttpClient())
+            using (HttpClient client = new HttpClient())
             {
                 client.BaseAddress = new Uri(GitPusherBase);
-                HttpResponseMessage response = await client.GetAsync(GitPusherEndpoint + "/" +category); 
+                HttpResponseMessage response = await client.GetAsync(GitPusherEndpoint + "/" + category);
                 if (response.IsSuccessStatusCode)
                 {
                     string responseData = await response.Content.ReadAsStringAsync();
                     result = JsonConvert.DeserializeObject<List<Category>>(responseData);
                     return result;
                 }
-                else 
-                {throw new ItemsNotFoundException("Kunne ikke finde noget i databasen hos GitPushers");}
+                else
+                { throw new ItemsNotFoundException("Kunne ikke finde noget i databasen hos GitPushers"); }
             }
         }
 
-          public async Task<ImageResponse> DeleteById(string id)
-
+        // Sletter et element fra databasen baseret på id og returnerer en ImageResponse for det slettede element
+        public async Task<ImageResponse> DeleteById(string id)
         {
             var filter = Builders<CatalogItemDB>.Filter.Eq(c => c.Id, id);
             var dbData = await _catalogitems.FindOneAndDeleteAsync(filter);
@@ -140,6 +138,8 @@ namespace CatalogService.Services
             ImageResponse combined = new ImageResponse(img, catalogdata);
             return combined;
         }
+
+        // Opdaterer et katalogelement i databasen og returnerer en ImageResponse for det opdaterede element
         public async Task<ImageResponse> UpdateCatalogItem(List<IFormFile> pictures, CatalogItem data)
         {
             //Burde kunne skrives bedre, men det kræver lige lidt hjerne...
@@ -155,6 +155,8 @@ namespace CatalogService.Services
             CatalogItemDB dbData = await _catalogitems.FindOneAndUpdateAsync(filter, update, new FindOneAndUpdateOptions<CatalogItemDB> { ReturnDocument = ReturnDocument.After });
             return new ImageResponse(picService.ReadPicture(newPaths), await dbData.Convert(RedisConnection));
         }
+
+        // Opretter et nyt katalogelement i databasen og returnerer en bool-værdi, der angiver om oprettelsen var vellykket
         public async Task<bool> CreateCatalogItem(List<IFormFile> pictures, CatalogItem data)
         {
             _logger.LogInformation("create starttime: " + data.StartTime);
@@ -164,7 +166,6 @@ namespace CatalogService.Services
             try
             {
                 await _catalogitems.InsertOneAsync(item);
-
                 return true;
             }
             catch (Exception ex)
@@ -173,9 +174,10 @@ namespace CatalogService.Services
             }
             //burde kunne return noget, men det har mongodb driver ikke
         }
+
+        // Henter starttid, sluttid, startbud og købspris for et element baseret på id og returnerer en Wrapper
         public async Task<Wrapper> GetTimeAndPrice(string id)
         {
-
             var filter = Builders<CatalogItemDB>.Filter.Eq(c => c.Id, id);
             var dbData = (await _catalogitems.FindAsync(filter)).FirstOrDefault();
             if (dbData == null)
@@ -185,6 +187,8 @@ namespace CatalogService.Services
             Wrapper newWrapper = new Wrapper(dbData.StartTime, dbData.EndTime, dbData.StartingBid, dbData.BuyoutPrice);
             return newWrapper;
         }
+
+        // Opdaterer sluttidspunktet for et katalogelement baseret på dets ID og returnerer en bool-værdi, der angiver om opdateringen var vellykket
         public async Task<bool> SetTime(TimeDTO data)
         {
             var filter = Builders<CatalogItemDB>.Filter.Eq(c => c.Id, data.CatalogId);
@@ -196,7 +200,6 @@ namespace CatalogService.Services
             var update = Builders<CatalogItemDB>.Update.Set(c => c.EndTime, data.EndTime);
             CatalogItemDB dbData = await _catalogitems.FindOneAndUpdateAsync(filter, update);
             return true;
-
         }
     }
 }
