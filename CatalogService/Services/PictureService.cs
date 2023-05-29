@@ -26,16 +26,20 @@ namespace CatalogService.Services
 
         public async Task<List<string>> SavePicture(List<IFormFile> files)
     {
+        _logger.LogInformation("Save Picture metode ramt. Dette er imagePath:" + imagepath);
         var paths = new List<string>();
         foreach (var file in files)
                 {
+                    _logger.LogInformation("Der findes files");
                     if (file.Length > 0)
                     {
+                        _logger.LogInformation("går igang med at gamme billede");
                         // Generate a unique filename
                         string fileName = Guid.NewGuid().ToString() + Path.GetExtension(file.FileName);
 
                         // Construct the path to save the file
                         string filePath = Path.Combine(imagepath, fileName);
+                        _logger.LogInformation("Dette er filepath : " + filePath);
 
                         // Save the file to disk
                         using (var stream = new FileStream(filePath, FileMode.Create))
