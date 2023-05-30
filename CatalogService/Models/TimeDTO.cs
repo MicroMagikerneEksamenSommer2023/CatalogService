@@ -8,6 +8,7 @@ namespace CatalogService.Models
     {
         [Newtonsoft.Json.JsonProperty("catalogId")]
         public string CatalogId {get; set;}
+        
         [Newtonsoft.Json.JsonProperty("endTime")]
         public DateTime EndTime {get;set;}
         
