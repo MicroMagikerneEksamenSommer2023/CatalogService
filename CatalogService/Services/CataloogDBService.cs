@@ -20,6 +20,7 @@ namespace CatalogService.Services
         Task<Wrapper> GetTimeAndPrice(string id);
         Task<bool> SetTime(TimeDTO data);
         Task<ImageResponse> UpdateCatalogItem(List<IFormFile> pictures, CatalogItem data);
+        Task<List<Category>> GetFromPushers(string category);
     }
 
     public class CatalogDBService : ICatalogDBService
@@ -104,9 +105,6 @@ namespace CatalogService.Services
             }
             return result;
         }
-
-      
-
 
         public async Task<List<Category>> GetFromPushers(string category)
         {

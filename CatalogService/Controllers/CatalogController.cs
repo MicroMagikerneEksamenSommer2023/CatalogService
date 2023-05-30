@@ -177,4 +177,48 @@ public class CatalogController : ControllerBase
             return StatusCode(500, new { error = "An unexpected error occurred."+ ex.Message });
         }
     }
+
+    [HttpGet("getfrompushers/{categoryid}")]
+    public async Task<IActionResult> GetFromPushers([FromRoute]string categoryid)
+    {
+        try
+        {
+            var items = await dBService.GetFromPushers(categoryid);
+            return Ok(items);
+        }
+        catch (ItemsNotFoundException ex)
+        {
+            return NotFound(new { error = ex.Message });
+        }
+        catch (Exception ex)
+        {
+            // Handle other exceptions or unexpected errors
+            return StatusCode(500, new { error = "An unexpected error occurred."+ ex.Message });
+        }
+    }
+
+    [HttpGet("privatepusherapi/{category}")]
+    public async Task<IActionResult> SendToPushers([FromRoute]string category)
+    {
+        try
+        {
+            var items = await dBService.GetByCategory(category);
+            List<Category> templist = new List<Category>();
+            foreach(var item in items)
+            {
+                templist.Add(new Category(item.AdditionalData.Category,item.AdditionalData.Category,item.AdditionalData.Description,item.AdditionalData.StartTime));
+            }
+            return Ok(templist);
+        }
+        catch (ItemsNotFoundException ex)
+        {
+            return NotFound(new { error = ex.Message });
+        }
+        catch (Exception ex)
+        {
+            // Handle other exceptions or unexpected errors
+            return StatusCode(500, new { error = "An unexpected error occurred."+ ex.Message });
+        }
+    }
+
 }
